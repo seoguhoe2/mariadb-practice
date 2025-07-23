@@ -49,3 +49,14 @@ SELECT *
    FROM tbl_categorymysqlmysqlmysql
 ORDER BY -ref_category_code; 
 
+-- ------------------------------------------------------
+-- field 함수를 활용한 order by
+SELECT
+       orderable_status
+     , FIELD(orderable_status, 'Y', 'N') AS '가능 여부'
+     , menu_name
+  FROM tbl_menu
+ ORDER BY FIELD(orderable_status, 'Y', 'N') DESC;
+ 
+SELECT * FROM tbl_menu ORDER BY orderable_status DESC;
+
