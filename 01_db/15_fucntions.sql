@@ -59,6 +59,8 @@ SELECT POW(3,2), SQRT(81);
 
 SELECT FLOOR(RAND() * 4  + 5), FLOOR(RAND() * 4) + 5;
 
+-- SIGN 왜 안했지 나
+
 SELECT TRUNCATE(12345.12645, 2), TRUNCATE(1294.12345, -2);
 
 -- 3) 날짜 및 시간 관련 함수
