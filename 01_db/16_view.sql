@@ -69,3 +69,18 @@ SELECT
      , a.category_code
   FROM tbl_menu a
   JOIN tbl_category b ON a.category_code = b.category_code;
+
+-- -------------------------------------------------------
+CREATE OR REPLACE VIEW v_test
+AS
+SELECT 
+       AVG(menu_price) + 3
+  FROM tbl_menu;
+
+SELECT * FROM v_test;
+
+-- view를 사용하는 목적
+-- 1) DBA가 일반 백엔드 개발자 각각에게 필요한 정보 제공을 위해
+-- 2) 실제 비즈니스에서 사용되는 용어로 별칭을 달아 가독성 향상 및 오해 방지
+-- 3) 복잡한 db관계를 고민하지 않고 사용할 수 있음
+
