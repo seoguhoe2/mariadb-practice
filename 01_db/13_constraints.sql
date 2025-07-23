@@ -159,3 +159,77 @@ DELETE
  
 SELECT * FROM user_foreignkey2;   -- 부모 데이터인 10이 없어지니 자동으로 NULL로 채워졌다.
 
+-- ---------------------------------------------------------------
+-- CHECK 제약조건(조건식을 활용한 상세한 제약사항) 제약조건 = 주로 Validation이라고 한다.
+-- DB에선 무결성=유효한 이라고 생각하면 됨. (무결성 있는 = 유효한) 값을 갖는게 목표
+DROP TABLE if EXISTS user_check;
+CREATE TABLE if NOT EXISTS user_check (
+    user_no INT AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(255) NOT NULL,
+    gender VARCHAR(3) CHECK(gender IN ('남','여')),  -- check 제약조건은 컬럼레벨도 컬럼을 작성한다.
+    age INT,
+	 CHECK(age >= 19 AND age <= 30)                   -- 제약조건은 어느 레벨이던 괜찮으나 단체 차원에서의 약속으로 통일은 해야한다.
+);
+
+INSERT
+  INTO user_check
+VALUES
+(NULL, '홍길동', '남', 25),
+(NULL, '신사임당', '여', 23);
+
+INSERT
+  INTO user_check
+VALUES
+(NULL, '김개똥', '중', 27);                          -- 제약조건 위반으로 인해 오류 발생
+
+-- --------------------------------------------------------------
+-- default 제약조건
+DROP TABLE if EXISTS tbl_country;
+CREATE TABLE if NOT EXISTS tbl_country (
+    country_code INT AUTO_INCREMENT PRIMARY KEY,
+    country_name VARCHAR(255) DEFAULT '한국',
+    population VARCHAR(255) DEFAULT '0명',
+    add_day DATE DEFAULT (CURRENT_DATE),
+    add_time DATETIME DEFAULT (CURRENT_TIME)
+);
+
+INSERT
+  INTO tbl_country
+VALUES
+(NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT);
+
+-- INSERT
+--   INTO tbl_country
+-- VALUES
+-- (NULL, NULL, NULL, NULL, NULL);                    -- NULL이 들어간다고 DEFAULT값이 되는 건 아니구나.
+
+SELECT * FROM tbl_country;
+DESC tbl_country;
+
+-- ---------------------------------------------------------------
+-- 제약 조건 확인
+SELECT 
+    TABLE_NAME as '테이블명',
+    ENGINE as '엔진',
+    TABLE_ROWS as '행수',
+    ROUND(DATA_LENGTH/1024/1024, 2) as 'MB'
+FROM information_schema.TABLES
+WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_TYPE = 'BASE TABLE';                   -- 내 DB 관련 정보 확인
+    
+
+-- 현재 데이터베이스의 모든 제약조건 조회
+
+
+-- 특정 테이블의 제약조건
+SELECT 
+    tc.CONSTRAINT_NAME,
+    CONSTRAINT_TYPE,
+    COLUMN_NAME
+FROM information_schema.TABLE_CONSTRAINTS tc
+LEFT JOIN information_schema.KEY_COLUMN_USAGE kcu 
+    ON tc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME 
+    AND tc.TABLE_SCHEMA = kcu.TABLE_SCHEMA 
+    AND tc.TABLE_NAME = kcu.TABLE_NAME
+WHERE tc.TABLE_SCHEMA = DATABASE() 
+    AND tc.TABLE_NAME = 'user_check';
